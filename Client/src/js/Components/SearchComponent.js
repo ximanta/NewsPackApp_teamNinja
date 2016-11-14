@@ -10,7 +10,7 @@ var SearchComponent=React.createClass({
   },
   componentDidMount:function(){
     $.ajax({
-      url:"http://localhost:8090/user/categories",
+      url:"http://localhost:8080/user/categories",
       type:'GET',
       dataType:'JSON',
       success:function(data){

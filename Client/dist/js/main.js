@@ -26153,38 +26153,11 @@ var DisplayNews = React.createClass({displayName: "DisplayNews",
 module.exports = DisplayNews;
 },{"./NewsDisplayBox.js":243,"react":232}],236:[function(require,module,exports){
 var React = require('react');
-var SearchComponent = require('./SearchComponent')
 var FavouriteDisplay= React.createClass({displayName: "FavouriteDisplay",
-
-  deleteFavNews:function()
-{
-  //alert(title);
-  var toBeDeleteObj = this.props.newsObj;
-  url = this.props.newsObj.url;
-  alert(url);
-  var deleteFromURL = this.props.del.bind(null,url);
- $.ajax({
-   url:'http://localhost:8080/news/delete/',
-   type: 'DELETE',
-   data : toBeDeleteObj,
-
-   success: function(data)
-   {
-     alert(url);
-     deleteFromURL();
-     console.log(data+"hello");
-   }.bind(this),
-   error: function(err)
-   {
-     console.log(err);
-   }.bind(this)
- });
- },
 
   render: function(){
     return (
       React.createElement("div", {className: "container", id: "movieElement"}, 
-        React.createElement(SearchComponent, null), 
       React.createElement("div", {style: {backgroundColor:'#CCCCCC'}, className: "row"}, 
       React.createElement("div", {className: "col-xs-4"}, 
       React.createElement("div", null, 
@@ -26214,8 +26187,7 @@ var FavouriteDisplay= React.createClass({displayName: "FavouriteDisplay",
 React.createElement("label", {className: "col-sm-1 control-label", htmlFor: "formGroupInputLarge"}), 
 React.createElement("div", {className: "col-sm-11"}, 
   React.createElement("a", {id: "modal-195236", href: "#modal-container-195236", role: "button", className: "btn", "data-toggle": "modal"}, 
-  React.createElement("button", {className: "btn btn-primary btn-sm"}, "UPDATE ", React.createElement("span", {className: "glyphicon glyphicon-check"}))), "  ", 
-  React.createElement("button", {onClick: this.deleteFavNews, className: "btn btn-primary btn-sm"}, "DELETE ", React.createElement("span", {className: "glyphicon glyphicon-trash"})), "  ", 
+  React.createElement("button", {className: "btn btn-primary btn-sm"}, "ADD ", React.createElement("span", {className: "glyphicon glyphicon-check"}))), "  ", 
       React.createElement("a", {href: this.props.url}, React.createElement("button", {className: "btn btn-success btn-sm"}, "Check full News", React.createElement("span", {className: "glyphicon glyphicon-eye-open"})))
 )
 )
@@ -26226,7 +26198,7 @@ React.createElement("div", {className: "col-sm-11"},
       React.createElement("p", null)
       )
       ), 
-      "//Modal Window to save category and commnets.", 
+
       React.createElement("div", {className: "modal fade", id: "modal-container-195236", role: "dialog", "aria-labelledby": "myModalLabel", "aria-hidden": "true"}, 
         React.createElement("div", {className: "modal-dialog"}, 
           React.createElement("div", {className: "modal-content"}, 
@@ -26276,7 +26248,7 @@ React.createElement("div", {className: "col-sm-11"},
 });
 
 module.exports = FavouriteDisplay;
-},{"./SearchComponent":244,"react":232}],237:[function(require,module,exports){
+},{"react":232}],237:[function(require,module,exports){
 var React = require('react');
 var Footer = React.createClass({displayName: "Footer",
 
@@ -26383,71 +26355,54 @@ module.exports = HomeComponent;
 },{"./DisplayNews.js":235,"react":232,"react-router":81}],239:[function(require,module,exports){
 var React = require('react');
 var FavouriteDisplay= require('./FavouriteDisplay.js');
+var SearchComponent = require('./SearchComponent');
 var ListFav = React.createClass({displayName: "ListFav",
-
-   getInitialState:function()
-   {
-     return {
-       newsData:[]
-     }
-   },
-  getNews: function(obj){
-    if(!obj){
-      obj={};
+  getInitialState:function()
+  {
+    return {
+      Newsdata:[]
     }
-        $.ajax({
-            url:"http://localhost:8080/news/get",
-            type:'POST',
-            data:obj,
-            dataType: 'JSON',
-            success: function(data) {
-             this.setState({newsData:data});
-           }.bind(this),
-             error:function(err){
-                 console.log(err);
-             }.bind(this)
-        });
+  },
+  getNews: function(obj){
+    if(!obj) obj={};
+      $.ajax({
+          url:"http://localhost:8080/news/get",
+          type:'POST',
+          data:obj,
+          dataType: 'JSON',
+          success: function(data) {
+           this.setState({Newsdata:data});
+         }.bind(this),
+           error:function(err){
+               console.log(err);
+           }.bind(this)
+      });
     },
   componentDidMount:function() {
-    this.getNews();
+    this.getNews(null);
   },
-deletemovie:function(url){
-  alert(url);
-  var temp = this.state.newsData;
-  j=-1;
-  for(var i=0;i<temp.length;i++){
-    if(temp[i].url==url){
-      j=i;
-      break;
-    }
-  }
-  if(j>-1){
-    temp.splice(j,1);
-  }
-  this.setState({newsData:temp})
-},
    render:function(){
      var News;
-     if(this.state.newsData.length==0)
+     if(this.state.Newsdata.length==0)
      {
       News =  React.createElement("h1", null, "No favourite news added")
      }
      else {
-       var te  = this.deletemovie;
-        News = this.state.newsData.map(function(news) {
-         return (React.createElement(FavouriteDisplay, {newsObj: news, del: te})
+        News = this.state.Newsdata.map(function(news) {
+         return (React.createElement(FavouriteDisplay, {newsObj: news})
          );
         });
      }
      return(
        React.createElement("div", null, 
+        React.createElement(SearchComponent, {getNews: this.getNews}), 
         News
        )
        )
    }
    });
 module.exports = ListFav;
-},{"./FavouriteDisplay.js":236,"react":232}],240:[function(require,module,exports){
+},{"./FavouriteDisplay.js":236,"./SearchComponent":244,"react":232}],240:[function(require,module,exports){
 var React = require('react');
 var {browserHistory}= require ('react-router');
 var LoginComponent = React.createClass({displayName: "LoginComponent",
@@ -26698,67 +26653,66 @@ module.exports=NewsDisplayBox;
 var React=require('react');
 
 var SearchComponent=React.createClass({displayName: "SearchComponent",
-    getInitialState:function(){
-        return({
-          SelectOptions:[],
-          value:'select',
-          Keyword:""
-        })
-    },
-    componentDidMount:function(){
-        var url1="http://localhost:8090/user/categories";
-        $.ajax({
-            url:url1,
-            type:'GET',
-            dataType:'JSON',
-            success:function(data){
-                console.log(data);
-                this.setState({SelectOptions:data.category});
-            }.bind(this),
-            error:function(err){
-                console.log(err);
-            }.bind(this)
-        });
-    },
+  getInitialState:function(){
+    return({
+      SelectOptions:[],
+      category:"",
+      key:""
+    })
+  },
+  componentDidMount:function(){
+    $.ajax({
+      url:"http://localhost:8080/user/categories",
+      type:'GET',
+      dataType:'JSON',
+      success:function(data){
+        console.log(data);
+        this.setState({SelectOptions:data.category});
+      }.bind(this),
+      error:function(err){
+        console.log(err);
+      }.bind(this)
+    });
+  },
 
-    submitHandler: function(){
-      if(value=='select')
-      {
-          this.setState({value:''});
-      }
-      var category=this.state.value;
-      var obj={"category":category,"keyword":Keyword};
-      console.log(obj);
-      this.getNews(obj);
-
-    },
-    changeHandler: function(event){
-    this.setState({Keyword:event.target.value});
-      this.props.SearchChange(Keyword)
-    },
-
-    render:function(){
-
-      var SelectListArr=this.state.SelectOptions.map(function(option){
-              console.log('entering');
-              return(React.createElement("option", {value: option}, option));
-          });
-
-      return (
-        React.createElement("div", null, 
-        React.createElement("h1", null, "Search Your News"), 
-        React.createElement("select", {id: "myList", onChange: this.GetCategoryFavourites}, 
-        React.createElement("option", {value: "Select"}, "Select"), 
-        SelectListArr
-        ), 
-        React.createElement("br", null), 
-        React.createElement("input", {type: "text", size: "50", placeholder: "Search a News...", onChange: this.changeHandler}), "     ", 
-        React.createElement("button", {onClick: this.submitHandler, className: "btn btn-large btn-Warning "}, " Submit ")
-       )
-     );
-
-       }
-   });
+  submitHandler: function(){
+    var category = this.state.category;
+    if(category=='Select')
+    {
+      category = "";
+    }
+    var obj={"category":category,"keyword":this.state.key};
+    this.props.getNews(obj);
+    console.log(obj);
+  },
+  changeHandler: function(event){
+    this.setState({key:event.target.value});
+  },
+  dropChangeHandler:function(event){
+    console.log(event.target.value);
+    var category=event.target.value;
+    this.setState({category:category});
+    console.log(this.state.category);
+  },
+  render:function(){
+    var SelectListArr=this.state.SelectOptions.map(function(option){
+      console.log('entering');
+      return(React.createElement("option", {value: option}, option));
+    });
+    return (
+      React.createElement("div", null, 
+      React.createElement("h1", null, "Search Your News"), 
+      React.createElement("select", {id: "myList", onChange: this.dropChangeHandler}, 
+      React.createElement("option", {value: "Select"}, "Select"), 
+      SelectListArr
+      ), 
+      React.createElement("br", null), 
+      React.createElement("input", {type: "text", size: "50", placeholder: "Search a News...", onChange: this.changeHandler}), "     ", 
+      React.createElement("button", {onClick: this.submitHandler, className: "btn btn-large btn-Warning "}, " Submit ")
+      )
+    );
+  }
+});
 module.exports=SearchComponent;
 },{"react":232}],245:[function(require,module,exports){
 var React = require('react');
@@ -26770,7 +26724,7 @@ var Signup = React.createClass({displayName: "Signup",
                 var lastname= this.refs.lname.value;
                 var email = this.refs.email.value;
                 var username = this.refs.userName.value;
-                var password = this.refs.pass.value;
+                var password = this.refs.pass.value+"";
                 var confirmpass = this.refs.confirmPass.value;
                 if (password==confirmpass)
                 {

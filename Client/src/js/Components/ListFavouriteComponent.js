@@ -1,4 +1,4 @@
-wovar React = require('react');
+var React = require('react');
 var FavouriteDisplay= require('./FavouriteDisplay.js');
 var SearchComponent = require('./SearchComponent');
 var ListFav = React.createClass({
@@ -11,7 +11,7 @@ var ListFav = React.createClass({
   getNews: function(obj){
     if(!obj) obj={};
       $.ajax({
-          url:"http://localhost:8090/news/get",
+          url:"http://localhost:8080/news/get",
           type:'POST',
           data:obj,
           dataType: 'JSON',
