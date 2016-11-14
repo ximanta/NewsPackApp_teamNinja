@@ -97,9 +97,22 @@ router.route("/get").post(isLoggedIn,function(req,res,next){
     if(keyword){
       if(data){
         data = data.map(function(d){
-        if((d.description.search(new RegExp(keyword,'i'))>-1)||(d.title.search(new RegExp(keyword,'i'))>-1)||(d.author.search(new RegExp(keyword,'i'))>-1)||(d.comment.search(new RegExp(keyword,'i'))>-1)){
-          return d;
-        }
+          if(d.description){
+            if(d.description.search(new RegExp(keyword,'i'))>-1)
+            return d;
+          }
+          else if(d.title){
+            if(d.title.search(new RegExp(keyword,'i'))>-1)
+            return d;
+          }
+          else if(d.author){
+            if(d.author.search(new RegExp(keyword,'i'))>-1)
+            return d;
+          }
+          else if(d.comment){
+            if(d.comment.search(new RegExp(keyword,'i'))>-1)
+            return d;
+          }
         });
       }
     }
