@@ -1,63 +1,46 @@
-var React = require('react');
+wovar React = require('react');
 var FavouriteDisplay= require('./FavouriteDisplay.js');
+var SearchComponent = require('./SearchComponent');
 var ListFav = React.createClass({
-
-   getInitialState:function()
-   {
-     return {
-       newsData:[]
-     }
-   },
-  getNews: function(obj){
-    if(!obj){
-      obj={};
+  getInitialState:function()
+  {
+    return {
+      Newsdata:[]
     }
-        $.ajax({
-            url:"http://localhost:8080/news/get",
-            type:'POST',
-            data:obj,
-            dataType: 'JSON',
-            success: function(data) {
-             this.setState({newsData:data});
-           }.bind(this),
-             error:function(err){
-                 console.log(err);
-             }.bind(this)
-        });
+  },
+  getNews: function(obj){
+    if(!obj) obj={};
+      $.ajax({
+          url:"http://localhost:8090/news/get",
+          type:'POST',
+          data:obj,
+          dataType: 'JSON',
+          success: function(data) {
+           this.setState({Newsdata:data});
+         }.bind(this),
+           error:function(err){
+               console.log(err);
+           }.bind(this)
+      });
     },
   componentDidMount:function() {
-    this.getNews();
+    this.getNews(null);
   },
-deletemovie:function(url){
-  alert(url);
-  var temp = this.state.newsData;
-  j=-1;
-  for(var i=0;i<temp.length;i++){
-    if(temp[i].url==url){
-      j=i;
-      break;
-    }
-  }
-  if(j>-1){
-    temp.splice(j,1);
-  }
-  this.setState({newsData:temp})
-},
    render:function(){
      var News;
-     if(this.state.newsData.length==0)
+     if(this.state.Newsdata.length==0)
      {
       News =  <h1>No favourite news added</h1>
      }
      else {
-       var te  = this.deletemovie;
-        News = this.state.newsData.map(function(news) {
-         return (<FavouriteDisplay  newsObj={news}  del={te}></FavouriteDisplay>
+        News = this.state.Newsdata.map(function(news) {
+         return (<FavouriteDisplay  newsObj={news} ></FavouriteDisplay>
          );
         });
      }
      return(
        <div>
+        <SearchComponent getNews={this.getNews} />
         {News}
        </div>
        )
