@@ -7,7 +7,7 @@ var Signup = React.createClass({
                 var lastname= this.refs.lname.value;
                 var email = this.refs.email.value;
                 var username = this.refs.userName.value;
-                var password = this.refs.pass.value;
+                var password = this.refs.pass.value+"";
                 var confirmpass = this.refs.confirmPass.value;
                 if (password==confirmpass)
                 {
