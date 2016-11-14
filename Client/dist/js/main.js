@@ -26154,8 +26154,65 @@ module.exports = DisplayNews;
 },{"./NewsDisplayBox.js":243,"react":232}],236:[function(require,module,exports){
 var React = require('react');
 var FavouriteDisplay= React.createClass({displayName: "FavouriteDisplay",
+  updateNews: function(){
+  var comment = this.refs.comment.value;
+  var toBeUpdateObj =  {'url':this.props.newsObj.url,'comment':comment};
+  alert(comment);
+   url = this.props.newsObj.url;
+   var updateRender = this.props.updateRender.bind(null,url);
+   $.ajax({
+     url:'http://localhost:8080/news/update',
+     type: 'PUT',
+     data: toBeUpdateObj,
 
+     success: function(data)
+     {
+       alert("in success");
+       updateRender();
+       alert(data);
+     }.bind(this),
+     error: function(err)
+     {
+       console.log(err);
+     }.bind(this)
+   });
+ },
+  deleteFavNews:function()
+  {
+   //alert(title);
+   var toBeDeleteObj = this.props.newsObj;
+   url = this.props.newsObj.url;
+   alert(url);
+   var deleteFromURL = this.props.del.bind(null,url);
+  $.ajax({
+    url:'http://localhost:8080/news/delete/',
+    type: 'DELETE',
+    data : toBeDeleteObj,
+
+    success: function(data)
+    {
+      alert(url);
+      deleteFromURL();
+    }.bind(this),
+    error: function(err)
+    {
+      console.log(err);
+    }.bind(this)
+  });
+  },
   render: function(){
+    var title=this.props.newsObj.publishedAt;
+   console.log(title);
+   var titleID='';
+   for(var i=0;i<title.length;++i){
+     if(title.charAt(i)==='-'||title.charAt(i)===':'){
+       continue;
+     }
+     else{
+       titleID+=title.charAt(i);
+     }
+   }
+   console.log(titleID);
     return (
       React.createElement("div", {className: "container", id: "movieElement"}, 
       React.createElement("div", {style: {backgroundColor:'#CCCCCC'}, className: "row"}, 
@@ -26184,11 +26241,24 @@ var FavouriteDisplay= React.createClass({displayName: "FavouriteDisplay",
   )
   ), 
   React.createElement("div", {className: "form-group form-group-sm"}, 
+React.createElement("label", {className: "col-sm-2 control-label", htmlFor: "formGroupInputLarge"}, "Category:"), 
+React.createElement("div", {className: "col-sm-10"}, 
+React.createElement("input", {className: "form-control", id: "disabledInput", type: "text", placeholder: this.props.newsObj.category, disabled: true}), React.createElement("p", null)
+)
+), 
+React.createElement("div", {className: "form-group form-group-sm"}, 
+React.createElement("label", {className: "col-sm-2 control-label", htmlFor: "formGroupInputLarge"}, "Comments:"), 
+React.createElement("div", {className: "col-sm-10"}, 
+React.createElement("input", {className: "form-control", id: "disabledInput", type: "text", placeholder: this.props.newsObj.comment, disabled: true}), React.createElement("p", null)
+)
+), 
+  React.createElement("div", {className: "form-group form-group-sm"}, 
 React.createElement("label", {className: "col-sm-1 control-label", htmlFor: "formGroupInputLarge"}), 
 React.createElement("div", {className: "col-sm-11"}, 
-  React.createElement("a", {id: "modal-195236", href: "#modal-container-195236", role: "button", className: "btn", "data-toggle": "modal"}, 
-  React.createElement("button", {className: "btn btn-primary btn-sm"}, "ADD ", React.createElement("span", {className: "glyphicon glyphicon-check"}))), "  ", 
-      React.createElement("a", {href: this.props.url}, React.createElement("button", {className: "btn btn-success btn-sm"}, "Check full News", React.createElement("span", {className: "glyphicon glyphicon-eye-open"})))
+React.createElement("a", {id: "modal-195236", href: '#'+titleID, role: "button", className: "btn", "data-toggle": "modal"}, 
+React.createElement("button", {className: "btn btn-primary btn-sm"}, "UPDATE ", React.createElement("span", {className: "glyphicon glyphicon-check"}))), "  ", 
+React.createElement("button", {onClick: this.deleteFavNews, className: "btn btn-primary btn-sm"}, "DELETE ", React.createElement("span", {className: "glyphicon glyphicon-trash"})), "  ", 
+   React.createElement("a", {href: this.props.newsObj.url, target: "_blank"}, React.createElement("button", {className: "btn btn-success btn-sm"}, "Check full News", React.createElement("span", {className: "glyphicon glyphicon-eye-open"})))
 )
 )
       )
@@ -26199,7 +26269,7 @@ React.createElement("div", {className: "col-sm-11"},
       )
       ), 
 
-      React.createElement("div", {className: "modal fade", id: "modal-container-195236", role: "dialog", "aria-labelledby": "myModalLabel", "aria-hidden": "true"}, 
+      React.createElement("div", {className: "modal fade", id: titleID, role: "dialog", "aria-labelledby": "myModalLabel", "aria-hidden": "true"}, 
         React.createElement("div", {className: "modal-dialog"}, 
           React.createElement("div", {className: "modal-content"}, 
             React.createElement("div", {className: "modal-header"}, 
@@ -26218,15 +26288,9 @@ React.createElement("div", {className: "col-sm-11"},
               React.createElement("hr", null), 
               React.createElement("form", {className: "form-horizontal", action: "index.html", method: "post"}, 
                 React.createElement("div", {className: "form-group"}, 
-                  React.createElement("label", {className: "col-lg-2 control-label", htmlFor: "inputName"}, "Category"), 
-                  React.createElement("div", {className: "col-lg-10"}, 
-                    React.createElement("input", {type: "text", ref: "category", className: "form-control", placeholder: "Category"})
-                  )
-                ), 
-                React.createElement("div", {className: "form-group"}, 
                   React.createElement("label", {className: "col-lg-2 control-label", htmlFor: "inputEmail"}, "Comments"), 
                   React.createElement("div", {className: "col-lg-10"}, 
-                    React.createElement("input", {type: "text", ref: "comment", className: "form-control", placeholder: "Comments"})
+                    React.createElement("input", {type: "text", ref: "comment", className: "form-control", placeholder: this.props.newsObj.comment})
                   )
                 )
               )
@@ -26235,7 +26299,7 @@ React.createElement("div", {className: "col-sm-11"},
               React.createElement("button", {type: "button", className: "btn btn-default", "data-dismiss": "modal"}, 
                 "Close"
               ), 
-              React.createElement("button", {onClick: this.addMovies, type: "button", className: "btn btn-success"}, 
+              React.createElement("button", {onClick: this.updateNews, type: "button", "data-dismiss": "modal", className: "btn btn-success"}, 
                 "Save changes"
               )
             )
@@ -26365,42 +26429,70 @@ var ListFav = React.createClass({displayName: "ListFav",
   },
   getNews: function(obj){
     if(!obj) obj={};
-      $.ajax({
-          url:"http://localhost:8080/news/get",
-          type:'POST',
-          data:obj,
-          dataType: 'JSON',
-          success: function(data) {
-           this.setState({Newsdata:data});
-         }.bind(this),
-           error:function(err){
-               console.log(err);
-           }.bind(this)
-      });
-    },
+    $.ajax({
+      url:"http://localhost:8080/news/get",
+      type:'POST',
+      data:obj,
+      dataType: 'JSON',
+      success: function(data) {
+        this.setState({Newsdata:data});
+      }.bind(this),
+      error:function(err){
+        console.log(err);
+      }.bind(this)
+    });
+  },
   componentDidMount:function() {
     this.getNews(null);
   },
-   render:function(){
-     var News;
-     if(this.state.Newsdata.length==0)
-     {
+  deletemovie:function(url){
+    alert(url);
+    var temp = this.state.Newsdata;
+    j=-1;
+    for(var i=0;i<temp.length;i++){
+      if(temp[i].url==url){
+        j=i;
+        break;
+      }
+    }
+    if(j>-1){
+      temp.splice(j,1);
+    }
+    this.setState({Newsdata:temp})
+  },
+  updateReRender:function(d){
+  var temp = this.state.Newsdata;
+  alert(d);
+  for(var i=0;i<temp.length;i++){
+    if(temp[i].url==d.url){
+      temp[i].comment=d.comment;
+      break;
+    }
+  }
+  this.setState({Newsdata:temp})
+},
+  render:function(){
+    var News;
+    if(this.state.Newsdata.length==0)
+    {
       News =  React.createElement("h1", null, "No favourite news added")
-     }
-     else {
-        News = this.state.Newsdata.map(function(news) {
-         return (React.createElement(FavouriteDisplay, {newsObj: news})
-         );
-        });
-     }
-     return(
-       React.createElement("div", null, 
-        React.createElement(SearchComponent, {getNews: this.getNews}), 
-        News
-       )
-       )
-   }
-   });
+    }
+    else {
+      var tempData  = this.deletemovie;
+      var tempUpdate = this.updateReRender;
+      News = this.state.Newsdata.map(function(news) {
+        return (React.createElement(FavouriteDisplay, {newsObj: news, updateRender: tempUpdate, del: tempData})
+        );
+      });
+    }
+    return(
+      React.createElement("div", null, 
+      React.createElement(SearchComponent, {getNews: this.getNews}), 
+      News
+      )
+    )
+  }
+});
 module.exports = ListFav;
 },{"./FavouriteDisplay.js":236,"./SearchComponent":244,"react":232}],240:[function(require,module,exports){
 var React = require('react');
